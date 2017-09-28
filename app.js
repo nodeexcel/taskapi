@@ -16,5 +16,5 @@ function errorHandler(err, req, res, next) {
     }
 }
 app.listen(6001, function() {
-    console.log("Server started at port number: 3000");
+    console.log("Server started at port number: 6001");
 });
