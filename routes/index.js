@@ -8,6 +8,7 @@ var validation = require('../middleware/validation');
 var MongoClient = require('mongodb').MongoClient;
 router.post('/register', function(req, res, next) {
     validation.register_validation(req.body, function(err, data) {
+        console.log(req);
         if (err) {
             res.status(400).json(err);
         } else {
@@ -17,7 +18,7 @@ router.post('/register', function(req, res, next) {
             })
             detail.save(function(err, data) {
                 if (err) {
-                    res.status(400).json(err.message);
+                    res.status(400).json({ error: 0, message: "already exist" });
                 } else
                     res.json({ error: 0, message: "data inserted", data: data })
             })

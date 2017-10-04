@@ -5,8 +5,9 @@ var db = require('./db.js')
 var routes = require('./routes/index.js');
 app.use(db())
 app.use(bodyParser.urlencoded({
-    extended: true
+    extended: false
 }));
+app.use(bodyParser.json({ type: 'application/*+json' }))
 app.use('/', routes);
 app.use(errorHandler);
 
