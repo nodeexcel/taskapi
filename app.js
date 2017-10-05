@@ -3,11 +3,13 @@ var app = express();
 var bodyParser = require('body-parser');
 var db = require('./db.js')
 var routes = require('./routes/index.js');
+var cors = require('cors');
 app.use(db())
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(bodyParser.json({ type: 'application/*+json' }))
+app.use(cors());
 app.use('/', routes);
 app.use(errorHandler);
 
