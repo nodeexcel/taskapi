@@ -3,7 +3,7 @@ var _ = require('lodash');
 var jwt = require('jsonwebtoken');
 module.exports = {
     register_validation: function(body, callback) {
-        console.log(body)
+        // console.log(body)
         var valid_mail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!(body.email.match(valid_mail)))
             callback("invalid email address!", null);
@@ -21,8 +21,9 @@ module.exports = {
         }
     },
     login_validation: function(body, callback) {
-        if (body.username == "")
-            callback("empty username!", null);
+        // console.log(body);
+        if (body.email == "")
+            callback("empty email!", null);
         else if (body.password == "")
             callback("empty password!", null);
         else {

@@ -8,7 +8,7 @@ var validation = require('../middleware/validation');
 var MongoClient = require('mongodb').MongoClient;
 router.post('/register', function(req, res, next) {
     validation.register_validation(req.body, function(err, data) {
-        console.log(req);
+        // console.log(req);
         if (err) {
             res.status(400).json(err);
         } else {
@@ -26,20 +26,23 @@ router.post('/register', function(req, res, next) {
     })
 });
 router.post('/login', function(req, res, next) {
+    // console.log(req.body)
+
     validation.login_validation(req.body, function(err, data) {
         if (err) {
             next(err);
         } else {
             req.register_user.findOne({ email: data.email, password: data.password }, function(err, users_data) {
                 if (err) {
-                    next(err);
-                } else if (data) {
+                    res.status(400).json({ error: 1, message: "check email or password" });
+                } else if (users_data) {
+                    // console.log(users_data)
                     var token = jwt.sign({ user_id: users_data._id }, "jwt_tok", {
                         expiresIn: 3600000
                     });
                     res.json({ error: 0, token: token })
                 } else {
-                    res.json('Not a user!Get registered')
+                    res.json({ error: 0, data: "ivalid user ! get registered!" })
                 }
             });
         }
