@@ -18,7 +18,7 @@ router.post('/register', function(req, res, next) {
             })
             detail.save(function(err, data) {
                 if (err) {
-                    res.status(400).json({ error: 0, message: "already exist" });
+                    res.status(400).json({ error: 1, message: "already exist" });
                 } else
                     res.json({ error: 0, message: "data inserted", data: data })
             })
