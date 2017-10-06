@@ -42,7 +42,7 @@ router.post('/login', function(req, res, next) {
                     });
                     res.json({ error: 0, token: token })
                 } else {
-                    res.json({ error: 0, data: "ivalid user ! get registered!" })
+                    res.json({ error: 1, message: "ivalid user ! get registered!" })
                 }
             });
         }
