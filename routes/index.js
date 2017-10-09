@@ -51,7 +51,7 @@ router.post('/login', function(req, res, next) {
 router.post('/add_task', function(req, res, next) {
     validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
-            next(err);
+            next({error:err, status:403});
         } else {
             validation.validate_task(req.body, function(err, data) {
                 if (err) {
@@ -72,10 +72,10 @@ router.post('/add_task', function(req, res, next) {
         }
     })
 });
-router.get('/view_all_task', function(req, res, next) {
+router.post('/view_all_task', function(req, res, next) {
     validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
-            next(err);
+            next({error:err, status:403});
         } else {
             req.get_task.find({}).exec(function(err, data) {
                 if (err) {
@@ -87,24 +87,29 @@ router.get('/view_all_task', function(req, res, next) {
         }
     })
 });
-router.get('/delete', function(req, res, next) {
+router.post('/delete', function(req, res, next) {
     var id = req.headers.user_id;
     validation.validateAccess(req, function(err, data) {
-        req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
-            if (err) {
-                next(err);
-            } else if (data) {
-                req.get_task.remove({ "_id": data._id }, function(err, result) {
-                    if (err) {
-                        next(err);
-                    } else {
-                        res.json({ error: 0, message: "data deleted", data: data });
-                    }
-                });
-            } else {
-                res.json({ error: 0, message: "data not found", data: data });
-            }
-        });
+        if(err){
+            next({error:err, status:403});
+        }
+        else{
+            req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
+                if (err) {
+                    next(err);
+                } else if (data) {
+                    req.get_task.remove({ "_id": data._id }, function(err, result) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.json({ error: 0, message: "data deleted", data: data });
+                        }
+                    });
+                } else {
+                    res.json({ error: 0, message: "data not found", data: data });
+                }
+            });
+        }
     });
 });
 module.exports = router;
