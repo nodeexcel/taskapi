@@ -25,9 +25,8 @@ router.post('/register', function(req, res, next) {
         }
     })
 });
-router.post('/login', function(req, res, next) {
-    // console.log(req.body)
 
+router.post('/login', function(req, res, next) {
     validation.login_validation(req.body, function(err, data) {
         if (err) {
             next(err);
@@ -48,16 +47,18 @@ router.post('/login', function(req, res, next) {
         }
     });
 });
+
 router.post('/add_task', function(req, res, next) {
     validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
-            next({error:err, status:403});
+            next({ error: err, status: 403 });
         } else {
             validation.validate_task(req.body, function(err, data) {
                 if (err) {
                     res.status(400).json(err);
                 } else {
                     var task_details = new req.get_task({
+                        users_id: access_token_data.user_id,
                         task: data.task,
                         date: data.date
                     })
@@ -72,12 +73,13 @@ router.post('/add_task', function(req, res, next) {
         }
     })
 });
-router.post('/view_all_task', function(req, res, next) {
+
+router.get('/view_all_task', function(req, res, next) {
     validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
-            next({error:err, status:403});
+            next({ error: err, status: 403 });
         } else {
-            req.get_task.find({}).exec(function(err, data) {
+            req.get_task.find({ users_id: access_token_data.user_id }).exec(function(err, data) {
                 if (err) {
                     next(err);
                 } else if (data) {
@@ -87,13 +89,13 @@ router.post('/view_all_task', function(req, res, next) {
         }
     })
 });
-router.post('/delete', function(req, res, next) {
+
+router.delete('/delete', function(req, res, next) {
     var id = req.headers.user_id;
     validation.validateAccess(req, function(err, data) {
-        if(err){
-            next({error:err, status:403});
-        }
-        else{
+        if (err) {
+            next({ error: err, status: 403 });
+        } else {
             req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
                 if (err) {
                     next(err);
@@ -111,5 +113,35 @@ router.post('/delete', function(req, res, next) {
             });
         }
     });
+});
+
+router.post('/edit_task', function(req, res, next) {
+    validation.validateAccess(req, function(err, access_token_data) {
+        if (err) {
+            next({ error: err, status: 403 });
+        } else {
+            validation.validate_task(req.body, function(err, data) {
+                if (err) {
+                    res.status(400).json(err);
+                } else {
+                    req.get_task.findOneAndUpdate({ _id: req.headers.user_id }, { $set: { task: req.body.task, phone_no: req.body.date } }, function(err, result) {
+                        if (err) {
+                            next(err);
+                        } else {
+                            res.json({ error: 0, message: "task updated", data: result });
+                        }
+                    })
+                }
+            })
+        }
+    })
+});
+
+router.post('/task_status', function(req, res, next) {
+    validation.validateAccess(req, function(err, access_token_data) {
+        if (err) {
+            next({ error: err, status: 403 });
+        } else {}
+    })
 });
 module.exports = router;

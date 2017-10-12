@@ -41,6 +41,7 @@ module.exports = {
         }
     },
     validateAccess: function(req, callback) {
+        // console.log(req.headers.access_token)
         jwt.verify(req.headers.access_token, "jwt_tok", function(err, access_token_data) {
             if (err) {
                 callback(err, "");

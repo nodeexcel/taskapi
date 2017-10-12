@@ -13,6 +13,7 @@ module.exports = function() {
         strict: true
     });
     var task = mongoose.Schema({
+        users_id: { type: String },
         task: { type: String },
         date: { type: Date, required: true }
     }, {
