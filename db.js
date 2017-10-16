@@ -15,7 +15,8 @@ module.exports = function() {
     var task = mongoose.Schema({
         users_id: { type: String },
         task: { type: String },
-        date: { type: Date, required: true }
+        date: { type: Date, required: true },
+        status: { type: Boolean, default: false }
     }, {
         collection: 'task_collection',
         strict: true

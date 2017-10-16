@@ -124,7 +124,7 @@ router.post('/edit_task', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err);
                 } else {
-                    req.get_task.findOneAndUpdate({ _id: req.headers.user_id }, { $set: { task: req.body.task, phone_no: req.body.date } }, function(err, result) {
+                    req.get_task.findOneAndUpdate({ _id: req.headers.user_id }, { $set: { task: req.body.task, date: req.body.date } }, function(err, result) {
                         if (err) {
                             next(err);
                         } else {
@@ -137,11 +137,41 @@ router.post('/edit_task', function(req, res, next) {
     })
 });
 
-router.post('/task_status', function(req, res, next) {
+router.get('/task_status', function(req, res, next) {
     validation.validateAccess(req, function(err, access_token_data) {
         if (err) {
             next({ error: err, status: 403 });
-        } else {}
+        } else {
+            req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
+                if (err) {
+                    next(err);
+                } else if (data) {
+                    if (data.status == false) {
+                        req.get_task.update({
+                            $set: { status: true }
+                        }, function(err, result) {
+                            if (err) {
+                                next(err);
+                            } else {
+                                res.json({ error: 0, message: "task completed", data: result });
+                            }
+                        })
+                    } else {
+                        req.get_task.update({
+                            $set: { status: false }
+                        }, function(err, result) {
+                            if (err) {
+                                next(err);
+                            } else {
+                                res.json({ error: 0, message: "task incompleted", data: result });
+                            }
+                        })
+                    }
+                } else {
+                    res.json({ error: 0, message: "data not found", data: data });
+                }
+            });
+        }
     })
 });
 module.exports = router;
