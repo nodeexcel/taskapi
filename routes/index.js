@@ -8,7 +8,6 @@ var validation = require('../middleware/validation');
 var MongoClient = require('mongodb').MongoClient;
 router.post('/register', function(req, res, next) {
     validation.register_validation(req.body, function(err, data) {
-        // console.log(req);
         if (err) {
             res.status(400).json(err);
         } else {
@@ -35,7 +34,6 @@ router.post('/login', function(req, res, next) {
                 if (err) {
                     res.status(400).json({ error: 1, message: "check email or password" });
                 } else if (users_data) {
-                    // console.log(users_data)
                     var token = jwt.sign({ user_id: users_data._id }, "jwt_tok", {
                         expiresIn: 3600000
                     });
@@ -57,8 +55,12 @@ router.post('/add_task', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err);
                 } else {
+                    var users_id = [];
+                    users_id.push({
+                        id: access_token_data.user_id
+                    })
                     var task_details = new req.get_task({
-                        users_id: access_token_data.user_id,
+                        users_id: users_id,
                         task: data.task,
                         date: data.date
                     })
@@ -79,7 +81,7 @@ router.get('/view_all_task', function(req, res, next) {
         if (err) {
             next({ error: err, status: 403 });
         } else {
-            req.get_task.find({ users_id: access_token_data.user_id }).exec(function(err, data) {
+            req.get_task.find({ users_id: { "$elemMatch": { "id": access_token_data.user_id } } }).exec(function(err, data) {
                 if (err) {
                     next(err);
                 } else if (data) {
@@ -156,7 +158,7 @@ router.get('/task_status', function(req, res, next) {
                                 res.json({ error: 0, message: "task completed", data: result });
                             }
                         })
-                    } else {
+                    } else if (data.status == true) {
                         req.get_task.update({
                             $set: { status: false }
                         }, function(err, result) {
@@ -174,4 +176,46 @@ router.get('/task_status', function(req, res, next) {
         }
     })
 });
+
+router.post('/share_task', function(req, res, next) {
+    validation.validateAccess(req, function(err, access_token_data) {
+        if (err) {
+            next({ error: err, status: 403 });
+        } else {
+            req.register_user.findOne({ email: req.body.email }, function(err, users_data) {
+                if (err) {
+                    res.status(400).json({ error: 1, message: "check email or password" });
+                } else if (users_data) {
+                    var users_id = [];
+                    req.get_task.find({ _id: req.body._id }, function(err, data) {
+
+                        users_id = data[0].users_id;
+                        users_id.push({
+                            id: users_data._id
+                        })
+                        req.get_task.update({
+                            $set: {
+                                users_id: users_id
+                            }
+                        }, function(err, result) {
+                            if (err) {
+                                res.json({
+                                    error: 1
+                                });
+                            } else {
+                                res.json({
+                                    error: 0,
+                                    data: result
+                                });
+                            }
+                        });
+                    });
+                } else {
+                    res.json({ error: 1, message: "invalid user ! get registered!" })
+                }
+            });
+        }
+    })
+});
+
 module.exports = router;

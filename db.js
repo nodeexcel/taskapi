@@ -13,10 +13,13 @@ module.exports = function() {
         strict: true
     });
     var task = mongoose.Schema({
-        users_id: { type: String },
+        // users_id: [],
         task: { type: String },
         date: { type: Date, required: true },
-        status: { type: Boolean, default: false }
+        status: { type: Boolean, default: false },
+        users_id: [{
+            id: String
+        }]
     }, {
         collection: 'task_collection',
         strict: true
