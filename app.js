@@ -15,9 +15,10 @@ app.use(errorHandler);
 
 function errorHandler(error, req, res, next) {
     if (error.status) {
-        res.status(error.status).json({ error: error});
-    }else{
-    	res.status(500).json({error})
+        res.status(error.status).json({ error: error });
+    } else {
+        console.log(error)
+        res.status(500).json({ error })
     }
 }
 app.listen(6001, function() {
