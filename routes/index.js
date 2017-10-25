@@ -126,11 +126,13 @@ router.post('/edit_task', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err);
                 } else {
-                    req.get_task.findOneAndUpdate({ _id: req.headers.user_id }, { $set: { task: req.body.task, date: req.body.date } }, function(err, result) {
+                    req.get_task.update({ _id: req.headers.user_id }, { $set: { task: req.body.task } }, function(err, result) {
                         if (err) {
                             next(err);
                         } else {
-                            res.json({ error: 0, message: "task updated", data: result });
+                            req.get_task.find({ _id: req.headers.user_id }, function(err, data) {
+                                res.json({ error: 0, message: "task updated", data: data });
+                            });
                         }
                     })
                 }
