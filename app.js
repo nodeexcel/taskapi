@@ -21,6 +21,7 @@ function errorHandler(error, req, res, next) {
         res.status(500).json({ error })
     }
 }
-app.listen(6001, function() {
-    console.log("Server started at port number: 6001");
+var port = process.env.PORT || 6001;
+app.listen(port, function() {
+    console.log("App is running on port " + port);
 });
