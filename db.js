@@ -4,7 +4,7 @@ module.exports = function() {
     var Schema = mongoose.Schema;
     var ObjectId = Schema.ObjectId;
     mongoose.Promise = global.Promise;
-    var conn = mongoose.connect('mongodb://localhost/task_api_db');
+    var conn = mongoose.connect('mongodb://ashutosh_m:java123@ds249025.mlab.com:49025/task_api');
     var user_details = mongoose.Schema({
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true }
@@ -13,7 +13,6 @@ module.exports = function() {
         strict: true
     });
     var task = mongoose.Schema({
-        // users_id: [],
         task: { type: String },
         date: { type: Date, required: true },
         status: { type: Boolean, default: false },
