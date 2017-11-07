@@ -93,12 +93,12 @@ router.get('/view_all_task', function(req, res, next) {
 });
 
 router.delete('/delete', function(req, res, next) {
-    var id = req.headers.user_id;
+    var id = req.headers.task_id;
     validation.validateAccess(req, function(err, data) {
         if (err) {
             next({ error: err, status: 403 });
         } else {
-            req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
+            req.get_task.findOne({ _id: req.headers.task_id }, function(err, data) {
                 if (err) {
                     next(err);
                 } else if (data) {
@@ -126,11 +126,11 @@ router.post('/edit_task', function(req, res, next) {
                 if (err) {
                     res.status(400).json(err);
                 } else {
-                    req.get_task.update({ _id: req.headers.user_id }, { $set: { task: req.body.task } }, function(err, result) {
+                    req.get_task.update({ _id: req.headers.task_id }, { $set: { task: req.body.task } }, function(err, result) {
                         if (err) {
                             next(err);
                         } else {
-                            req.get_task.find({ _id: req.headers.user_id }, function(err, data) {
+                            req.get_task.find({ _id: req.headers.task_id }, function(err, data) {
                                 res.json({ error: 0, message: "task updated", data: data });
                             });
                         }
@@ -146,7 +146,7 @@ router.get('/task_status', function(req, res, next) {
         if (err) {
             next({ error: err, status: 403 });
         } else {
-            req.get_task.findOne({ _id: req.headers.user_id }, function(err, data) {
+            req.get_task.findOne({ _id: req.headers.task_id }, function(err, data) {
                 if (err) {
                     next(err);
                 } else if (data) {
@@ -189,7 +189,7 @@ router.post('/share_task', function(req, res, next) {
                     res.status(400).json({ error: 1, message: "check email or password" });
                 } else if (users_data) {
                     var users_id = [];
-                    req.get_task.find({ _id: req.body._id }, function(err, data) {
+                    req.get_task.find({ _id: req.body.task_id }, function(err, data) {
                         users_id = data[0].users_id;
                         users_id.push({
                             id: users_data._id
