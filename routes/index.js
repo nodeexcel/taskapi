@@ -151,9 +151,7 @@ router.get('/task_status', function(req, res, next) {
                     next(err);
                 } else if (data) {
                     if (data.status == false) {
-                        req.get_task.update({
-                            $set: { status: true }
-                        }, function(err, result) {
+                        req.get_task.update({ _id: req.headers.task_id }, { $set: { status: true } }, function(err, result) {
                             if (err) {
                                 next(err);
                             } else {
@@ -161,9 +159,7 @@ router.get('/task_status', function(req, res, next) {
                             }
                         })
                     } else if (data.status == true) {
-                        req.get_task.update({
-                            $set: { status: false }
-                        }, function(err, result) {
+                        req.get_task.update({ _id: req.headers.task_id }, { $set: { status: false } }, function(err, result) {
                             if (err) {
                                 next(err);
                             } else {
