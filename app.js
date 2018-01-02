@@ -8,7 +8,7 @@ app.use(db())
 app.use(bodyParser.urlencoded({
     extended: false
 }));
-app.use(bodyParser.json({ type: 'application/*+json' }))
+app.use(bodyParser.json())
 app.use(cors());
 app.use('/', routes);
 app.use(errorHandler);
