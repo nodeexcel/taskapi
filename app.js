@@ -1,9 +1,10 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var db = require('./db.js')
-var routes = require('./routes/index.js');
+var db = require("./model/db")
+var routes = require('./routes');
 var cors = require('cors');
+var errorHandler = require("./utils/Errors");
 app.use(db())
 app.use(bodyParser.urlencoded({
     extended: false
@@ -12,16 +13,7 @@ app.use(bodyParser.json())
 app.use(cors());
 app.use('/', routes);
 app.use(errorHandler);
-
-function errorHandler(error, req, res, next) {
-    if (error.status) {
-        res.status(error.status).json({ error: error });
-    } else {
-        console.log(error)
-        res.status(500).json({ error })
-    }
-}
 var port = process.env.PORT || 6001;
-app.listen(port, function() {
+app.listen(port, function () {
     console.log("App is running on port " + port);
 });
